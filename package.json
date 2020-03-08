@@ -1,0 +1,19 @@
+{
+  "name": "PlusBitAPI",
+  "version": "1.0.0",
+  "description": "api for mobile wallet",
+  "repository": "https://github.com/wkibbler/PlusBit-API",
+  "main": "plusbit.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node plusbit"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "currency-formatter": "^1.5.5",
+    "express": "^4.16.4",
+    "moment": "^2.24.0",
+    "request": "^2.88.0"
+  }
+}
