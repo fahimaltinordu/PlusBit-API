@@ -10,7 +10,17 @@ app.listen(3001, () => {
 
 function getBitcoin(params, cb){
   request(`https://insight.bitpay.com/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
-    request(`https://insight.bitpay.com/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
+    if (typeof balances !== 'object'){
+      cb({
+        price: '0.00',
+        balance: '0.0000',
+        rawFiat: 0.00,
+        fiatBalance: '0.00',
+        transactions: [],
+        status: 2
+      })
+    } else {
+      request(`https://insight.bitpay.com/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
         formatedTransactions.push({
@@ -27,15 +37,27 @@ function getBitcoin(params, cb){
         balance: parseFloat(balances.balance).toFixed(4),
         rawFiat: Number(balances.balance * params.price),
         fiatBalance: currencyFormatter.format(balances.balance * params.price, { code: params.unit }),
-        transactions: formatedTransactions
+        transactions: formatedTransactions,
+        status: 1
       })
     })
+    }
   })
 }
 
 function getIlcoin(params, cb){
   request(`https://ilcoinexplorer.com/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
-    request(`https://ilcoinexplorer.com/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
+    if (typeof balances !== 'object'){
+      cb({
+        price: '0.00',
+        balance: '0.0000',
+        rawFiat: 0.00,
+        fiatBalance: '0.00',
+        transactions: [],
+        status: 2
+      })
+    } else {
+      request(`https://ilcoinexplorer.com/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
         formatedTransactions.push({
@@ -52,15 +74,27 @@ function getIlcoin(params, cb){
         balance: parseFloat(balances.balance).toFixed(4),
         rawFiat: Number(balances.balance * params.price),
         fiatBalance: currencyFormatter.format(balances.balance * params.price, { code: params.unit }),
-        transactions: formatedTransactions
+        transactions: formatedTransactions,
+        status: 1
       })
     })
+    }
   })
 }
 
 function getZel(params, cb){
   request(`https://explorer.zel.cash/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
-    request(`https://explorer.zel.cash/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
+    if (typeof balances !== 'object'){
+      cb({
+        price: '0.00',
+        balance: '0.0000',
+        rawFiat: 0.00,
+        fiatBalance: '0.00',
+        transactions: [],
+        status: 2
+      })
+    } else {
+      request(`https://explorer.zel.cash/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
         formatedTransactions.push({
@@ -77,15 +111,27 @@ function getZel(params, cb){
         balance: parseFloat(balances.balance).toFixed(4),
         rawFiat: Number(balances.balance * params.price),
         fiatBalance: currencyFormatter.format(balances.balance * params.price, { code: params.unit }),
-        transactions: formatedTransactions
+        transactions: formatedTransactions,
+        status: 1
       })
     })
+    }
   })
 }
 
 function getSafecoin(params, cb){
   request(`https://explorer.safecoin.org/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
-    request(`https://explorer.safecoin.org/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
+    if (typeof balances !== 'object'){
+      cb({
+        price: '0.00',
+        balance: '0.0000',
+        rawFiat: 0.00,
+        fiatBalance: '0.00',
+        transactions: [],
+        status: 2
+      })
+    } else {
+      request(`https://explorer.safecoin.org/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
         formatedTransactions.push({
@@ -102,9 +148,11 @@ function getSafecoin(params, cb){
         balance: parseFloat(balances.balance).toFixed(4),
         rawFiat: Number(balances.balance * params.price),
         fiatBalance: currencyFormatter.format(balances.balance * params.price, { code: params.unit }),
-        transactions: formatedTransactions
+        transactions: formatedTransactions,
+        status: 1
       })
     })
+    }
   })
 }
 
