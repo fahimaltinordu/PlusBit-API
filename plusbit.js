@@ -119,8 +119,8 @@ function getZel(params, cb){
   })
 }
 
-function getSafecoin(params, cb){
-  request(`https://explorer.safecoin.org/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
+function getDash(params, cb){
+  request(`https://insight.dash.org/api/address/${params.address}`, { json: true }, (err, res, balances) => {
     if (typeof balances !== 'object'){
       cb({
         price: '0.00',
@@ -131,7 +131,7 @@ function getSafecoin(params, cb){
         status: 2
       })
     } else {
-      request(`https://explorer.safecoin.org/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
+      request(`https://insight.dash.org/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
         formatedTransactions.push({
@@ -156,21 +156,21 @@ function getSafecoin(params, cb){
   })
 }
 
-app.get("/plusbit/:fiatUnit/:bitcoin/:ilcoin/:zel/:safe", (req, res, next) => {
+app.get("/plusbit/:fiatUnit/:bitcoin/:ilcoin/:zel/:dash", (req, res, next) => {
   var response = res
-  request(`https://api.coingecko.com/api/v3/simple/price?ids=ilcoin,bitcoin,zelcash,safe-coin-2&vs_currencies=try,usd,eur,chf,cad,aud,gbp,jpy,nzd,cny,zar,thb,php,krw,vnd,myr,rub,inr,sgd,hkd,ars,brl,dkk,idr,kwd,mxn,nok,pln,pkr,sar,sek,uah`, { json: true }, (err, res, body) => {
+  request(`https://api.coingecko.com/api/v3/simple/price?ids=ilcoin,bitcoin,zelcash,dash&vs_currencies=try,usd,eur,chf,cad,aud,gbp,jpy,nzd,cny,zar,thb,php,krw,vnd,myr,rub,inr,sgd,hkd,ars,brl,dkk,idr,kwd,mxn,nok,pln,pkr,sar,sek,uah`, { json: true }, (err, res, body) => {
     let fiatUnit = req.params.fiatUnit.toLowerCase()
 
     getBitcoin({address: req.params.bitcoin, price: body.bitcoin[fiatUnit], unit: req.params.fiatUnit}, function(bitcoin_balances){
       getIlcoin({address: req.params.ilcoin, price: body.ilcoin[fiatUnit], unit: req.params.fiatUnit}, function(ilcoin_balances){
         getZel({address: req.params.zel, price: body.zelcash[fiatUnit], unit: req.params.fiatUnit}, function(zel_balances){
-          getSafecoin({address: req.params.safe, price: body['safe-coin-2'][fiatUnit], unit: req.params.fiatUnit}, function(safe_balances){
+          getDash({address: req.params.dash, price: body.dash[fiatUnit], unit: req.params.fiatUnit}, function(dash_balances){
             response.json({
-              totalBalance: currencyFormatter.format(bitcoin_balances.rawFiat + ilcoin_balances.rawFiat + zel_balances.rawFiat + safe_balances.rawFiat, { code: req.params.fiatUnit }),
+              totalBalance: currencyFormatter.format(bitcoin_balances.rawFiat + ilcoin_balances.rawFiat + zel_balances.rawFiat + dash_balances.rawFiat, { code: req.params.fiatUnit }),
               BTC: bitcoin_balances,
               ILC: ilcoin_balances,
               ZEL: zel_balances,
-              SAFE: safe_balances
+              DASH: dash_balances
             })
           })
         })
