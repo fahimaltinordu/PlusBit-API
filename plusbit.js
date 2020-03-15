@@ -120,7 +120,7 @@ function getZel(params, cb){
 }
 
 function getDash(params, cb){
-  request(`https://insight.dash.org/api/address/${params.address}`, { json: true }, (err, res, balances) => {
+  request(`https://insight.dash.org/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
     if (typeof balances !== 'object'){
       cb({
         price: '0.00',
