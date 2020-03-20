@@ -10,6 +10,7 @@ app.listen(3001, () => {
 
 function getBitcoin(params, cb){
   let heightList = new Array
+  try {
   request(`https://insight.bitpay.com/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
     if (typeof balances !== 'object'){
       cb({
@@ -29,6 +30,7 @@ function getBitcoin(params, cb){
         formatedTransactions.push({
           txid: tx.txid,
           direction: tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED',
+          to_from: tx.vin[0].addr == params.address ? tx.vout[0].scriptPubKey.addresses[0] : tx.vin[0].addr,
           value: Number(tx.vout[0].value),
           fiatValue: parseFloat((tx.vout[0].value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
@@ -47,10 +49,14 @@ function getBitcoin(params, cb){
     })
     }
   })
+} catch (err) {
+  throw new Error('Error with bitcoin. Request will time out', err)
+}
 }
 
 function getIlcoin(params, cb){
   let heightList = new Array
+  try {
   request(`https://ilcoinexplorer.com/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
     if (typeof balances !== 'object'){
       cb({
@@ -70,6 +76,7 @@ function getIlcoin(params, cb){
         formatedTransactions.push({
           txid: tx.txid,
           direction: tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED',
+          to_from: tx.vin[0].addr == params.address ? tx.vout[0].scriptPubKey.addresses[0] : tx.vin[0].addr,
           value: Number(tx.vout[0].value),
           fiatValue: parseFloat((tx.vout[0].value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
@@ -88,10 +95,14 @@ function getIlcoin(params, cb){
     })
     }
   })
+} catch (err) {
+  throw new Error('Error with ilcoin, request will timeout ', err)
+}
 }
 
 function getZel(params, cb){
   let heightList = new Array
+  try {
   request(`https://explorer.zel.cash/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
     if (typeof balances !== 'object'){
       cb({
@@ -111,6 +122,7 @@ function getZel(params, cb){
         formatedTransactions.push({
           txid: tx.txid,
           direction: tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED',
+          to_from: tx.vin[0].addr == params.address ? tx.vout[0].scriptPubKey.addresses[0] : tx.vin[0].addr,
           value: Number(tx.vout[0].value),
           fiatValue: parseFloat((tx.vout[0].value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
@@ -129,10 +141,14 @@ function getZel(params, cb){
     })
     }
   })
+} catch (err) {
+  throw new Error('Error with zel, request will timeout', err)
+}
 }
 
 function getZcash(params, cb){
   let heightList = new Array
+  try {
   request(`https://explorer.z.cash/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
     if (typeof balances !== 'object'){
       cb({
@@ -170,6 +186,9 @@ function getZcash(params, cb){
     })
     }
   })
+} catch (err) {
+  throw new Error('Error with zcash, request will timeout ', err)
+}
 }
 
 app.get("/plusbit/:fiatUnit/:bitcoin/:ilcoin/:zel/:zcash", (req, res, next) => {
