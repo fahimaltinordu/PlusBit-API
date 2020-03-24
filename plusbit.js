@@ -8,6 +8,14 @@ app.listen(3001, () => {
  console.log("Server running on port 3001");
 });
 
+function getTxValue(vout, address){
+  for (var i = 0; i < vout.length; i++){
+    if (vout[i].scriptPubKey.addresses[0] == address){
+      return vout[i].value
+    }
+  }
+}
+
 function getBitcoin(params, cb){
   let heightList = new Array
   try {
@@ -26,13 +34,14 @@ function getBitcoin(params, cb){
       request(`https://insight.bitpay.com/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
+        let value = getTxValue(tx.vout, params.address)
         heightList.push(65)
         formatedTransactions.push({
           txid: tx.txid,
           direction: tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED',
           to_from: tx.vin[0].addr == params.address ? tx.vout[0].scriptPubKey.addresses[0] : tx.vin[0].addr,
-          value: Number(tx.vout[0].value),
-          fiatValue: parseFloat((tx.vout[0].value * params.price).toFixed(2)),
+          value: Number(value),
+          fiatValue: parseFloat((value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
           time: moment(tx.time * 1000).format('HH:mm')
         })
@@ -72,13 +81,14 @@ function getIlcoin(params, cb){
       request(`https://ilcoinexplorer.com/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
+        let value = getTxValue(tx.vout, params.address)
         heightList.push(65)
         formatedTransactions.push({
           txid: tx.txid,
           direction: tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED',
           to_from: tx.vin[0].addr == params.address ? tx.vout[0].scriptPubKey.addresses[0] : tx.vin[0].addr,
-          value: Number(tx.vout[0].value),
-          fiatValue: parseFloat((tx.vout[0].value * params.price).toFixed(2)),
+          value: Number(value),
+          fiatValue: parseFloat((value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
           time: moment(tx.time * 1000).format('HH:mm')
         })
@@ -118,13 +128,14 @@ function getZel(params, cb){
       request(`https://explorer.zel.cash/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
+        let value = getTxValue(tx.vout, params.address)
         heightList.push(65)
         formatedTransactions.push({
           txid: tx.txid,
           direction: tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED',
           to_from: tx.vin[0].addr == params.address ? tx.vout[0].scriptPubKey.addresses[0] : tx.vin[0].addr,
-          value: Number(tx.vout[0].value),
-          fiatValue: parseFloat((tx.vout[0].value * params.price).toFixed(2)),
+          value: Number(value),
+          fiatValue: parseFloat((value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
           time: moment(tx.time * 1000).format('HH:mm')
         })
@@ -164,13 +175,14 @@ function getDash(params, cb){
       request(`https://insight.dash.org//api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
+        let value = getTxValue(tx.vout, params.address)
         heightList.push(65)
         formatedTransactions.push({
           txid: tx.txid,
           direction: tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED',
           to_from: tx.vin[0].addr == params.address ? tx.vout[0].scriptPubKey.addresses[0] : tx.vin[0].addr,
-          value: Number(tx.vout[0].value),
-          fiatValue: parseFloat((tx.vout[0].value * params.price).toFixed(2)),
+          value: Number(value),
+          fiatValue: parseFloat((value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
           time: moment(tx.time * 1000).format('HH:mm')
         })
