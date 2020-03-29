@@ -22,7 +22,7 @@ function getTxValue(vout, address, direction){
 function getBitcoin(params, cb){
   let heightList = new Array
   try {
-  request(`https://insight.bitpay.com/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
+  request(`https://explorer.btc.zelcore.io/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
     if (typeof balances !== 'object'){
       cb({
         price: '0.00',
@@ -34,7 +34,7 @@ function getBitcoin(params, cb){
         heightList: []
       })
     } else {
-      request(`https://insight.bitpay.com/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
+      request(`https://explorer.btc.zelcore.io/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
         let value = getTxValue(tx.vout, params.address, tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
@@ -163,7 +163,7 @@ function getZel(params, cb){
 function getDash(params, cb){
   let heightList = new Array
   try {
-  request(`https://insight.dash.org//api/addr/${params.address}`, { json: true }, (err, res, balances) => {
+  request(`https://explorer.dash.zelcore.io/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
     if (typeof balances !== 'object'){
       cb({
         price: '0.00',
@@ -175,7 +175,7 @@ function getDash(params, cb){
         heightList: []
       })
     } else {
-      request(`https://insight.dash.org//api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
+      request(`https://explorer.dash.zelcore.io/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
         let value = getTxValue(tx.vout, params.address, tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
