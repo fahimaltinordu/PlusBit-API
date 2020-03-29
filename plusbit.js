@@ -11,10 +11,12 @@ app.listen(3001, () => {
 function getTxValue(vout, address, direction){
   console.log(direction)
     for (var i = 0; i < vout.length; i++){
-      if (direction == 'RECEIVED'){
-        if (vout[i].scriptPubKey.addresses[0] == address) return vout[i].value
-      } else {
-        if (vout[i].scriptPubKey.addresses[0] !== address) return vout[i].value
+      if (vout[i].scriptPubKey.addresses !== undefined){
+        if (direction == 'RECEIVED'){
+          if (vout[i].scriptPubKey.addresses[0] == address) return vout[i].value
+        } else {
+          if (vout[i].scriptPubKey.addresses[0] !== address) return vout[i].value
+        }
       }
     }
 }
