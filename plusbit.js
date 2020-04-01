@@ -2,14 +2,13 @@ var express = require("express");
 var request = require('request')
 var moment = require('moment')
 var app = express();
-var currencyFormatter = require('currency-formatter');
+var currencyFormatter = require('currency-formatter')
 
 app.listen(3001, () => {
  console.log("Server running on port 3001");
 });
 
 function getTxValue(vout, address, direction){
-  console.log(direction)
     for (var i = 0; i < vout.length; i++){
       if (vout[i].scriptPubKey.addresses !== undefined){
         if (direction == 'RECEIVED'){
@@ -24,8 +23,12 @@ function getTxValue(vout, address, direction){
 function getBitcoin(params, cb){
   let heightList = new Array
   try {
-  request(`https://explorer.btc.zelcore.io/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
-    if (typeof balances !== 'object'){
+  request(`https://explorer.btc.zelcore.io/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
+    let balance = 0
+    for (var i = 0; i < utxos.length; i++){
+      balance = balance + utxos[i].amount
+    }
+    if (typeof utxos !== 'object'){
       cb({
         price: '0.00',
         balance: '0.0000',
@@ -53,9 +56,9 @@ function getBitcoin(params, cb){
       })
       cb({
         price: currencyFormatter.format(params.price, { code: params.unit }),
-        balance: parseFloat(balances.balance).toFixed(4),
-        rawFiat: Number(balances.balance * params.price),
-        fiatBalance: currencyFormatter.format(balances.balance * params.price, { code: params.unit }),
+        balance: parseFloat(balance).toFixed(8),
+        rawFiat: Number(balance * params.price),
+        fiatBalance: currencyFormatter.format(balance * params.price, { code: params.unit }),
         transactions: formatedTransactions,
         status: 1,
         heightList: heightList
@@ -71,8 +74,12 @@ function getBitcoin(params, cb){
 function getIlcoin(params, cb){
   let heightList = new Array
   try {
-  request(`https://ilcoinexplorer.com/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
-    if (typeof balances !== 'object'){
+  request(`https://ilcoinexplorer.com/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
+    let balance = 0
+    for (var i = 0; i < utxos.length; i++){
+      balance = balance + utxos[i].amount
+    }
+    if (typeof utxos !== 'object'){
       cb({
         price: '0.00',
         balance: '0.0000',
@@ -100,9 +107,9 @@ function getIlcoin(params, cb){
       })
       cb({
         price: currencyFormatter.format(params.price, { code: params.unit }),
-        balance: parseFloat(balances.balance).toFixed(4),
-        rawFiat: Number(balances.balance * params.price),
-        fiatBalance: currencyFormatter.format(balances.balance * params.price, { code: params.unit }),
+        balance: parseFloat(balance).toFixed(8),
+        rawFiat: Number(balance * params.price),
+        fiatBalance: currencyFormatter.format(balance * params.price, { code: params.unit }),
         transactions: formatedTransactions,
         status: 1,
         heightList: heightList
@@ -118,8 +125,12 @@ function getIlcoin(params, cb){
 function getZel(params, cb){
   let heightList = new Array
   try {
-  request(`https://explorer.zel.cash/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
-    if (typeof balances !== 'object'){
+  request(`https://explorer.zel.cash/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
+    let balance = 0
+    for (var i = 0; i < utxos.length; i++){
+      balance = balance + utxos[i].amount
+    }
+    if (typeof utxos !== 'object'){
       cb({
         price: '0.00',
         balance: '0.0000',
@@ -147,9 +158,9 @@ function getZel(params, cb){
       })
       cb({
         price: currencyFormatter.format(params.price, { code: params.unit }),
-        balance: parseFloat(balances.balance).toFixed(4),
-        rawFiat: Number(balances.balance * params.price),
-        fiatBalance: currencyFormatter.format(balances.balance * params.price, { code: params.unit }),
+        balance: parseFloat(balance).toFixed(8),
+        rawFiat: Number(balance * params.price),
+        fiatBalance: currencyFormatter.format(balance * params.price, { code: params.unit }),
         transactions: formatedTransactions,
         status: 1,
         heightList: heightList
@@ -165,8 +176,12 @@ function getZel(params, cb){
 function getDash(params, cb){
   let heightList = new Array
   try {
-  request(`https://explorer.dash.zelcore.io/api/addr/${params.address}`, { json: true }, (err, res, balances) => {
-    if (typeof balances !== 'object'){
+  request(`https://explorer.dash.zelcore.io/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
+    let balance = 0
+    for (var i = 0; i < utxos.length; i++){
+      balance = balance + utxos[i].amount
+    }
+    if (typeof utxos !== 'object'){
       cb({
         price: '0.00',
         balance: '0.0000',
@@ -194,9 +209,9 @@ function getDash(params, cb){
       })
       cb({
         price: currencyFormatter.format(params.price, { code: params.unit }),
-        balance: parseFloat(balances.balance).toFixed(4),
-        rawFiat: Number(balances.balance * params.price),
-        fiatBalance: currencyFormatter.format(balances.balance * params.price, { code: params.unit }),
+        balance: parseFloat(balance).toFixed(4),
+        rawFiat: Number(balance * params.price),
+        fiatBalance: currencyFormatter.format(balance * params.price, { code: params.unit }),
         transactions: formatedTransactions,
         status: 1,
         heightList: heightList
