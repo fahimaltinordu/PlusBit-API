@@ -8,16 +8,21 @@ app.listen(3001, () => {
  console.log("Server running on port 3001");
 });
 
-function getTxValue(vout, address, direction){
+function getTxValue(vout, address){
+  var voutAddress
+  for (var i = 0; i < vout.length; i++){
+     if (vout[i].scriptPubKey.addresses[0] !== address) voutAddress = vout[i].scriptPubKey.addresses[0]
+  }
+  if (voutAddress !== undefined){
+    return vout[vout.findIndex((x) => x.scriptPubKey.addresses[0] === voutAddress)].value
+  } else {
+    // tx sent to self
+    let voutValues = new Array
     for (var i = 0; i < vout.length; i++){
-      if (vout[i].scriptPubKey.addresses !== undefined){
-        if (direction == 'RECEIVED'){
-          if (vout[i].scriptPubKey.addresses[0] == address) return vout[i].value
-        } else {
-          if (vout[i].scriptPubKey.addresses[0] !== address) return vout[i].value
-        }
-      }
+      voutValues.push(Number(vout[i].value))
     }
+    return Math.min.apply( Math, voutValues )
+  }
 }
 
 function getBitcoin(params, cb){
@@ -42,7 +47,7 @@ function getBitcoin(params, cb){
       request(`https://explorer.btc.zelcore.io/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
-        let value = getTxValue(tx.vout, params.address, tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
+        let value = getTxValue(tx.vout, params.address)
         heightList.push(65)
         formatedTransactions.push({
           txid: tx.txid,
@@ -93,7 +98,7 @@ function getIlcoin(params, cb){
       request(`https://ilcoinexplorer.com/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
-        let value = getTxValue(tx.vout, params.address, tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
+        let value = getTxValue(tx.vout, params.address)
         heightList.push(65)
         formatedTransactions.push({
           txid: tx.txid,
@@ -144,7 +149,7 @@ function getZel(params, cb){
       request(`https://explorer.zel.cash/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
-        let value = getTxValue(tx.vout, params.address, tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
+        let value = getTxValue(tx.vout, params.address)
         heightList.push(65)
         formatedTransactions.push({
           txid: tx.txid,
@@ -195,7 +200,7 @@ function getDash(params, cb){
       request(`https://explorer.dash.zelcore.io/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
-        let value = getTxValue(tx.vout, params.address, tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
+        let value = getTxValue(tx.vout, params.address)
         heightList.push(65)
         formatedTransactions.push({
           txid: tx.txid,
