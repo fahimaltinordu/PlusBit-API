@@ -71,7 +71,8 @@ function getBitcoin(params, cb){
           value: Number(value),
           fiatValue: parseFloat((value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
-          time: moment(tx.time * 1000).format('HH:mm')
+          time: moment(tx.time * 1000).format('HH:mm'),
+          confirmations: tx.confirmations
         })
       })
       cb({
@@ -122,7 +123,8 @@ function getIlcoin(params, cb){
           value: Number(value),
           fiatValue: parseFloat((value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
-          time: moment(tx.time * 1000).format('HH:mm')
+          time: moment(tx.time * 1000).format('HH:mm'),
+          confirmations: tx.confirmations
         })
       })
       cb({
@@ -173,7 +175,8 @@ function getZel(params, cb){
           value: Number(value),
           fiatValue: parseFloat((value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
-          time: moment(tx.time * 1000).format('HH:mm')
+          time: moment(tx.time * 1000).format('HH:mm'),
+          confirmations: tx.confirmations
         })
       })
       cb({
@@ -224,7 +227,8 @@ function getDash(params, cb){
           value: Number(value),
           fiatValue: parseFloat((value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
-          time: moment(tx.time * 1000).format('HH:mm')
+          time: moment(tx.time * 1000).format('HH:mm'),
+          confirmations: tx.confirmations
         })
       })
       cb({
