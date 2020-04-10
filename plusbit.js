@@ -118,7 +118,7 @@ function getIlcoin(params, cb){
         heightList.push(65)
         formatedTransactions.push({
           txid: tx.txid,
-          direction: tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED',
+          direction: tx.vin.length == 0 ? 'RECEIVED' : tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED',
           to_from: tx.vin[0].addr == params.address ? tx.vout[0].scriptPubKey.addresses[0] : tx.vin[0].addr,
           value: Number(value),
           fiatValue: parseFloat((value * params.price).toFixed(2)),
@@ -166,12 +166,12 @@ function getZel(params, cb){
       request(`https://explorer.zel.cash/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
-        let value = getTxValue(tx.vout, params.address, tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
+        let value = getTxValue(tx.vout, params.address, tx.vin.length == 0 ? 'RECEIVED' : tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
         heightList.push(65)
         formatedTransactions.push({
           txid: tx.txid,
-          direction: tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED',
-          to_from: tx.vin[0].addr == params.address ? tx.vout[0].scriptPubKey.addresses[0] : tx.vin[0].addr,
+          direction: tx.vin.length == 0 ? 'RECEIVED' : tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED',
+          to_from: tx.vin.length == 0 ? 'Sheilded Transaction' : tx.vin[0].addr == params.address ? tx.vout[0].scriptPubKey.addresses[0] : tx.vin[0].addr,
           value: Number(value),
           fiatValue: parseFloat((value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
