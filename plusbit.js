@@ -40,21 +40,6 @@ function getTxValue(vout, address, direction){
   }
 }
 
-function getThreeDecimalFiatValue(value, unit){
-  var twoDec = currencyFormatter.format(value, {code: unit})
-  let d = String(value).indexOf('.')
-  if (d !== -1) {
-    let stringy = String(value)
-    if (value !== 0){
-      return twoDec.slice(0, -1) + (stringy[d + 2] || '') + (stringy[d + 3] || '')
-    } else {
-      return twoDec + '0'
-    }
-  } else {
-    return twoDec
-  }
-}
-
 function getBitcoin(params, cb){
   let heightList = new Array
   try {
@@ -145,10 +130,10 @@ function getIlcoin(params, cb){
         })
       })
       cb({
-        price: getThreeDecimalFiatValue(params.price, params.unit),
+        price: currencyFormatter.format(params.price, { code: params.unit }),
         balance: parseFloat(balance).toFixed(8),
         rawFiat: Number(balance * params.price),
-        fiatBalance: getThreeDecimalFiatValue(balance * params.price, params.unit),
+        fiatBalance: currencyFormatter.format(balance * params.price, { code: params.unit }),
         transactions: formatedTransactions,
         status: 1,
         heightList: heightList
@@ -198,10 +183,10 @@ function getZel(params, cb){
         })
       })
       cb({
-        price: getThreeDecimalFiatValue(params.price, params.unit),
+        price: currencyFormatter.format(params.price, { code: params.unit }),
         balance: parseFloat(balance).toFixed(8),
         rawFiat: Number(balance * params.price),
-        fiatBalance: getThreeDecimalFiatValue(balance * params.price, params.unit),
+        fiatBalance: currencyFormatter.format(balance * params.price, { code: params.unit }),
         transactions: formatedTransactions,
         status: 1,
         heightList: heightList
