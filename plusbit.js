@@ -43,11 +43,15 @@ function getTxValue(vout, address, direction){
 function getThreeDecimalFiatValue(value, unit){
   var twoDec = currencyFormatter.format(value, {code: unit})
   let d = String(value).indexOf('.')
-  let stringy = String(value)
-  if (value !== 0){
-    return twoDec.slice(0, -1) + stringy[d + 2] + stringy[d + 3]
+  if (d !== -1) {
+    let stringy = String(value)
+    if (value !== 0){
+      return twoDec.slice(0, -1) + stringy[d + 2] || null + stringy[d + 3] || null
+    } else {
+      return twoDec + '0'
+    }
   } else {
-    return twoDec + '0'
+    return twoDec
   }
 }
 
