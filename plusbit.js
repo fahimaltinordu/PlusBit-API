@@ -46,7 +46,7 @@ function getThreeDecimalFiatValue(value, unit){
   if (d !== -1) {
     let stringy = String(value)
     if (value !== 0){
-      return twoDec.slice(0, -1) + stringy[d + 2] || null + stringy[d + 3] || null
+      return twoDec.slice(0, -1) + (stringy[d + 2] || '') + (stringy[d + 3] || '')
     } else {
       return twoDec + '0'
     }
