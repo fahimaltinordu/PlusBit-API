@@ -44,10 +44,6 @@ function getBitcoin(params, cb){
   let heightList = new Array
   try {
   request(`https://explorer.btc.zelcore.io/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
-    let balance = 0
-    for (var i = 0; i < utxos.length; i++){
-      balance = balance + utxos[i].amount
-    }
     if (typeof utxos !== 'object'){
       cb({
         price: '0.00',
@@ -59,6 +55,10 @@ function getBitcoin(params, cb){
         heightList: []
       })
     } else {
+      let balance = 0
+      for (var i = 0; i < utxos.length; i++){
+        balance = balance + utxos[i].amount
+      }
       request(`https://explorer.btc.zelcore.io/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
@@ -96,10 +96,6 @@ function getIlcoin(params, cb){
   let heightList = new Array
   try {
   request(`https://ilcoinexplorer.com/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
-    let balance = 0
-    for (var i = 0; i < utxos.length; i++){
-      balance = balance + utxos[i].amount
-    }
     if (typeof utxos !== 'object'){
       cb({
         price: '0.00',
@@ -111,6 +107,10 @@ function getIlcoin(params, cb){
         heightList: []
       })
     } else {
+      let balance = 0
+      for (var i = 0; i < utxos.length; i++){
+        balance = balance + utxos[i].amount
+      }
       request(`https://ilcoinexplorer.com/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
@@ -148,10 +148,6 @@ function getZel(params, cb){
   let heightList = new Array
   try {
   request(`https://explorer.zel.cash/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
-    let balance = 0
-    for (var i = 0; i < utxos.length; i++){
-      balance = balance + utxos[i].amount
-    }
     if (typeof utxos !== 'object'){
       cb({
         price: '0.00',
@@ -163,6 +159,10 @@ function getZel(params, cb){
         heightList: []
       })
     } else {
+      let balance = 0
+      for (var i = 0; i < utxos.length; i++){
+        balance = balance + utxos[i].amount
+      }
       request(`https://explorer.zel.cash/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
@@ -200,10 +200,6 @@ function getDash(params, cb){
   let heightList = new Array
   try {
   request(`https://explorer.dash.zelcore.io/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
-    let balance = 0
-    for (var i = 0; i < utxos.length; i++){
-      balance = balance + utxos[i].amount
-    }
     if (typeof utxos !== 'object'){
       cb({
         price: '0.00',
@@ -215,6 +211,10 @@ function getDash(params, cb){
         heightList: []
       })
     } else {
+      let balance = 0
+      for (var i = 0; i < utxos.length; i++){
+        balance = balance + utxos[i].amount
+      }
       request(`https://explorer.dash.zelcore.io/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
