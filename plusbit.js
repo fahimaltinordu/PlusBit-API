@@ -43,7 +43,7 @@ function getTxValue(vout, address, direction){
 function getBitcoin(params, cb){
   let heightList = new Array
   try {
-  request(`https://explorer.btc.zelcore.io/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
+  request(`https://explorer.btc.zelcore.io/api/addr/${params.address}/utxo`, { json: true, timeout: 1000 }, (err, res, utxos) => {
     if (typeof utxos !== 'object'){
       cb({
         price: '0.00',
@@ -59,7 +59,7 @@ function getBitcoin(params, cb){
       for (var i = 0; i < utxos.length; i++){
         balance = balance + utxos[i].amount
       }
-      request(`https://explorer.btc.zelcore.io/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
+      request(`https://explorer.btc.zelcore.io/api/txs/?address=${params.address}`, { json: true, timeout: 1000 }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
         let value = getTxValue(tx.vout, params.address, tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
@@ -96,7 +96,7 @@ function getBitcoin(params, cb){
 function getIlcoin(params, cb){
   let heightList = new Array
   try {
-  request(`https://ilcoinexplorer.com/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
+  request(`https://ilcoinexplorer.com/api/addr/${params.address}/utxo`, { json: true, timeout: 1000 }, (err, res, utxos) => {
     if (typeof utxos !== 'object'){
       cb({
         price: '0.000',
@@ -112,7 +112,7 @@ function getIlcoin(params, cb){
       for (var i = 0; i < utxos.length; i++){
         balance = balance + utxos[i].amount
       }
-      request(`https://ilcoinexplorer.com/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
+      request(`https://ilcoinexplorer.com/api/txs/?address=${params.address}`, { json: true, timeout: 1000 }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
         let value = getTxValue(tx.vout, params.address, tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
@@ -149,7 +149,7 @@ function getIlcoin(params, cb){
 function getZel(params, cb){
   let heightList = new Array
   try {
-  request(`https://explorer.zel.cash/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
+  request(`https://explorer.zel.cash/api/addr/${params.address}/utxo`, { json: true, timeout: 1000 }, (err, res, utxos) => {
     if (typeof utxos !== 'object'){
       cb({
         price: '0.000',
@@ -165,7 +165,7 @@ function getZel(params, cb){
       for (var i = 0; i < utxos.length; i++){
         balance = balance + utxos[i].amount
       }
-      request(`https://explorer.zel.cash/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
+      request(`https://explorer.zel.cash/api/txs/?address=${params.address}`, { json: true, timeout: 1000 }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
         let value = getTxValue(tx.vout, params.address, tx.vin.length == 0 ? 'RECEIVED' : tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
@@ -202,7 +202,7 @@ function getZel(params, cb){
 function getDash(params, cb){
   let heightList = new Array
   try {
-  request(`https://explorer.dash.zelcore.io/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
+  request(`https://explorer.dash.zelcore.io/api/addr/${params.address}/utxo`, { json: true, timeout: 1000 }, (err, res, utxos) => {
     if (typeof utxos !== 'object'){
       cb({
         price: '0.00',
@@ -218,7 +218,7 @@ function getDash(params, cb){
       for (var i = 0; i < utxos.length; i++){
         balance = balance + utxos[i].amount
       }
-      request(`https://explorer.dash.zelcore.io/api/txs/?address=${params.address}`, { json: true }, (err, res, transactions) => {
+      request(`https://explorer.dash.zelcore.io/api/txs/?address=${params.address}`, { json: true, timeout: 1000 }, (err, res, transactions) => {
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
         let value = getTxValue(tx.vout, params.address, tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
