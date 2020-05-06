@@ -47,7 +47,7 @@ function getBitcoin(params, cb){
     if (typeof utxos !== 'object'){
       cb({
         price: '0.00',
-        balance: '0.0000',
+        balance: '0.00000000',
         rawFiat: 0.00,
         fiatBalance: '0.00',
         transactions: [],
@@ -72,7 +72,8 @@ function getBitcoin(params, cb){
           fiatValue: parseFloat((value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
           time: moment(tx.time * 1000).format('HH:mm'),
-          confirmations: tx.confirmations
+          confirmations: tx.confirmations,
+          timestamp: tx.time
         })
       })
       cb({
@@ -98,10 +99,10 @@ function getIlcoin(params, cb){
   request(`https://ilcoinexplorer.com/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
     if (typeof utxos !== 'object'){
       cb({
-        price: '0.00',
-        balance: '0.0000',
-        rawFiat: 0.00,
-        fiatBalance: '0.00',
+        price: '0.000',
+        balance: '0.00000000',
+        rawFiat: 0.000,
+        fiatBalance: '0.000',
         transactions: [],
         status: 2,
         heightList: []
@@ -121,10 +122,11 @@ function getIlcoin(params, cb){
           direction: tx.vin.length == 0 ? 'RECEIVED' : tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED',
           to_from: tx.vin[0].addr == params.address ? tx.vout[0].scriptPubKey.addresses[0] : tx.vin[0].addr,
           value: Number(value),
-          fiatValue: parseFloat((value * params.price).toFixed(2)),
+          fiatValue: parseFloat((value * params.price).toFixed(3)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
           time: moment(tx.time * 1000).format('HH:mm'),
-          confirmations: tx.confirmations
+          confirmations: tx.confirmations,
+          timestamp: tx.time
         })
       })
       cb({
@@ -150,10 +152,10 @@ function getZel(params, cb){
   request(`https://explorer.zel.cash/api/addr/${params.address}/utxo`, { json: true }, (err, res, utxos) => {
     if (typeof utxos !== 'object'){
       cb({
-        price: '0.00',
-        balance: '0.0000',
-        rawFiat: 0.00,
-        fiatBalance: '0.00',
+        price: '0.000',
+        balance: '0.00000000',
+        rawFiat: 0.000,
+        fiatBalance: '0.000',
         transactions: [],
         status: 2,
         heightList: []
@@ -176,7 +178,8 @@ function getZel(params, cb){
           fiatValue: parseFloat((value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
           time: moment(tx.time * 1000).format('HH:mm'),
-          confirmations: tx.confirmations
+          confirmations: tx.confirmations,
+          timestamp: tx.time
         })
       })
       cb({
@@ -203,7 +206,7 @@ function getDash(params, cb){
     if (typeof utxos !== 'object'){
       cb({
         price: '0.00',
-        balance: '0.0000',
+        balance: '0.00000000',
         rawFiat: 0.00,
         fiatBalance: '0.00',
         transactions: [],
@@ -228,12 +231,13 @@ function getDash(params, cb){
           fiatValue: parseFloat((value * params.price).toFixed(2)),
           date: moment(tx.time * 1000).format("DD/MM/YYYY"),
           time: moment(tx.time * 1000).format('HH:mm'),
-          confirmations: tx.confirmations
+          confirmations: tx.confirmations,
+          timestamp: tx.time
         })
       })
       cb({
         price: currencyFormatter.format(params.price, { code: params.unit }),
-        balance: parseFloat(balance).toFixed(4),
+        balance: parseFloat(balance).toFixed(8),
         rawFiat: Number(balance * params.price),
         fiatBalance: currencyFormatter.format(balance * params.price, { code: params.unit }),
         transactions: formatedTransactions,
