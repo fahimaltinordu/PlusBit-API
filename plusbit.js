@@ -3,6 +3,8 @@ var request = require('request')
 var moment = require('moment')
 var app = express();
 var currencyFormatter = require('currency-formatter')
+var fetch = require('node-fetch')
+var crypto = require('crypto')
 
 app.listen(3001, () => {
  console.log("Server running on port 3001");
@@ -149,7 +151,7 @@ function getIlcoin(params, cb){
 function getZel(params, cb){
   let heightList = new Array
   try {
-  request(`https://explorer.zel.cash/api/addr/${params.address}/utxo`, { json: true, timeout: 1000 }, (err, res, utxos) => {
+  request(`https://explorer.zel.zelcore.io/api/addr/${params.address}/utxo`, { json: true, timeout: 1000 }, (err, res, utxos) => {
     if (typeof utxos !== 'object'){
       cb({
         price: '0.000',
@@ -165,7 +167,8 @@ function getZel(params, cb){
       for (var i = 0; i < utxos.length; i++){
         balance = balance + utxos[i].amount
       }
-      request(`https://explorer.zel.cash/api/txs/?address=${params.address}`, { json: true, timeout: 1000 }, (err, res, transactions) => {
+      request(`https://explorer.zel.zelcore.io/api/txs/?address=${params.address}`, { json: true, timeout: 1000 }, (err, res, transactions) => {
+        console.log(transactions)
       let formatedTransactions = new Array
       transactions.txs.forEach(tx => {
         let value = getTxValue(tx.vout, params.address, tx.vin.length == 0 ? 'RECEIVED' : tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
@@ -195,7 +198,61 @@ function getZel(params, cb){
     }
   })
 } catch (err) {
+  console.log('ERRORRRRR: ' + err)
   throw new Error('Error with zel, request will timeout', err)
+}
+}
+
+function getBitcoinZ(params, cb){
+  let heightList = new Array
+  try {
+  request(`https://explorer.btcz.rocks/api/addr/${params.address}/utxo`, { json: true, timeout: 1000 }, (err, res, utxos) => {
+    if (typeof utxos !== 'object'){
+      cb({
+        price: '0.000',
+        balance: '0.00000000',
+        rawFiat: 0.000,
+        fiatBalance: '0.000',
+        transactions: [],
+        status: 2,
+        heightList: []
+      })
+    } else {
+      let balance = 0
+      for (var i = 0; i < utxos.length; i++){
+        balance = balance + utxos[i].amount
+      }
+      request(`https://explorer.btcz.rocks/api/txs/?address=${params.address}`, { json: true, timeout: 1000 }, (err, res, transactions) => {
+      let formatedTransactions = new Array
+      transactions.txs.forEach(tx => {
+        let value = getTxValue(tx.vout, params.address, tx.vin.length == 0 ? 'RECEIVED' : tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED')
+        heightList.push(65)
+        formatedTransactions.push({
+          txid: tx.txid,
+          direction: tx.vin.length == 0 ? 'RECEIVED' : tx.vin[0].addr == params.address ? 'SENT' : 'RECEIVED',
+          to_from: tx.vin.length == 0 ? 'Sheilded Transaction' : tx.vin[0].addr == params.address ? tx.vout[0].scriptPubKey.addresses[0] : tx.vin[0].addr,
+          value: Number(value),
+          fiatValue: parseFloat((value * params.price).toFixed(2)),
+          date: moment(tx.time * 1000).format("DD/MM/YYYY"),
+          time: moment(tx.time * 1000).format('HH:mm'),
+          confirmations: tx.confirmations,
+          timestamp: tx.time
+        })
+      })
+      cb({
+        price: currencyFormatter.format(params.price, { code: params.unit }),
+        balance: parseFloat(balance).toFixed(8),
+        rawFiat: Number(balance * params.price),
+        fiatBalance: currencyFormatter.format(balance * params.price, { code: params.unit }),
+        transactions: formatedTransactions,
+        status: 1,
+        heightList: heightList
+      })
+    })
+    }
+  })
+} catch (err) {
+  throw new Error('Error with btcz, request will timeout', err)
 }
 }
 
@@ -252,9 +309,65 @@ function getDash(params, cb){
 }
 }
 
-app.get("/plusbit/:fiatUnit/:bitcoin/:ilcoin/:zel/:dash", (req, res, next) => {
+function decryptString(text){
+  var decipher = crypto.createDecipher('aes-256-ctr', 'bylibtech')
+  var dec = decipher.update(text,'hex','utf8')
+  dec += decipher.final('utf8');
+  return dec;
+}
+
+function getTurtlecoinData(data) {
+  let json = JSON.parse(decodeURIComponent(data))
+  return {
+    address: decryptString(json.address),
+    vpk: decryptString(json.vpk),
+    user: json.user,
+    password: json.password
+  }
+}
+
+function returnFailStatus(status, price) {
+  return {
+    price: price,
+    balance: '0.00000000',
+    rawFiat: 0.00,
+    fiatBalance: '0.00',
+    transactions: [],
+    status: status,
+    heightList: []
+  }
+}
+
+
+app.get("/plusbit/:fiatUnit/:bitcoin/:ilcoin/:zel/:dash/:bitcoinz", (req, res, next) => {
   var response = res
-  request(`https://api.coingecko.com/api/v3/simple/price?ids=ilcoin,bitcoin,zelcash,dash&vs_currencies=try,usd,eur,chf,cad,aud,gbp,jpy,nzd,cny,zar,thb,php,krw,vnd,myr,rub,inr,sgd,hkd,ars,brl,dkk,idr,kwd,mxn,nok,pln,pkr,sar,sek,uah`, { json: true }, (err, res, body) => {
+  request(`https://api.coingecko.com/api/v3/simple/price?ids=ilcoin,bitcoin,zelcash,dash,bitcoinz&vs_currencies=try,usd,eur,chf,cad,aud,gbp,jpy,nzd,cny,zar,thb,php,krw,vnd,myr,rub,inr,sgd,hkd,ars,brl,dkk,idr,kwd,mxn,nok,pln,pkr,sar,sek,uah`, { json: true }, (err, res, body) => {
+    let fiatUnit = req.params.fiatUnit.toLowerCase()
+
+    getBitcoin({address: req.params.bitcoin, price: body.bitcoin[fiatUnit], unit: req.params.fiatUnit}, function(bitcoin_balances){
+      getIlcoin({address: req.params.ilcoin, price: body.ilcoin[fiatUnit], unit: req.params.fiatUnit}, function(ilcoin_balances){
+        getZel({address: req.params.zel, price: body.zelcash[fiatUnit], unit: req.params.fiatUnit}, function(zel_balances){
+          getDash({address: req.params.dash, price: body.dash[fiatUnit], unit: req.params.fiatUnit}, function(dash_balances){
+            getBitcoinZ({address: req.params.bitcoinz, price: body.bitcoinz[fiatUnit], unit: req.params.fiatUnit}, function(bitcoinz_balances){
+              response.json({
+                totalBalance: currencyFormatter.format(bitcoin_balances.rawFiat + ilcoin_balances.rawFiat + zel_balances.rawFiat + dash_balances.rawFiat + bitcoinz_balances.rawFiat, { code: req.params.fiatUnit }),
+                BTC: bitcoin_balances,
+                ILC: ilcoin_balances,
+                ZEL: zel_balances,
+                DASH: dash_balances,
+                BTCZ: bitcoinz_balances
+              })
+            })
+          })
+        })
+      })
+    })
+  })
+});
+
+app.get("/plusbit/:fiatUnit/:bitcoin/:ilcoin/:zel/:dash/", (req, res, next) => {
+  var response = res
+  request(`https://api.coingecko.com/api/v3/simple/price?ids=ilcoin,bitcoin,zelcash,dash,bitcoinz&vs_currencies=try,usd,eur,chf,cad,aud,gbp,jpy,nzd,cny,zar,thb,php,krw,vnd,myr,rub,inr,sgd,hkd,ars,brl,dkk,idr,kwd,mxn,nok,pln,pkr,sar,sek,uah`, { json: true }, (err, res, body) => {
     let fiatUnit = req.params.fiatUnit.toLowerCase()
 
     getBitcoin({address: req.params.bitcoin, price: body.bitcoin[fiatUnit], unit: req.params.fiatUnit}, function(bitcoin_balances){
@@ -272,6 +385,5 @@ app.get("/plusbit/:fiatUnit/:bitcoin/:ilcoin/:zel/:dash", (req, res, next) => {
         })
       })
     })
-
   })
 });
